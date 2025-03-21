@@ -19,7 +19,7 @@ const Header = () => {
         </div>
         <div className="ms-auto">
           <button className="btn btn-outline-light">
-            <i className="bi bi-box-arrow-right me-2"></i>Log Out
+            Log Out
           </button>
         </div>
       </div>
