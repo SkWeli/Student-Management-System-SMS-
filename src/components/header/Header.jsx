@@ -1,5 +1,4 @@
-import React from "react";
-import './header.css';
+import React from 'react';
 
 const Header = () => {
   return (
@@ -19,7 +18,7 @@ const Header = () => {
         </div>
         <div className="ms-auto">
           <button className="btn btn-outline-light">
-            Log Out
+            <i className="bi bi-box-arrow-right me-2"></i>Log Out
           </button>
         </div>
       </div>

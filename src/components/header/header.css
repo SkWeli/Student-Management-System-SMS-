@@ -1,0 +1,46 @@
+.header {
+    background: linear-gradient(to right, #0052D4, #4364F7, #6FB1FC);
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .header-container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    height: 70px;
+    margin-right: 20px;
+  }
+  
+  .header-text {
+    text-align: left;
+  }
+  
+  .header-text h2 {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .header-text p {
+    font-size: 14px;
+    margin: 2px 0;
+  }
+  
+  .logout {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .logout-icon {
+    font-size: 20px;
+    margin-right: 5px;
+  }
