@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Header, Footer} from './components';
-import { StudentListPage} from './containers';
+import { StudentListPage, AddNewStudent} from './containers';
 
 const App = () => {
   return (
@@ -9,7 +9,7 @@ const App = () => {
       <Header/>
       <div className="container">
       
-      <StudentListPage/>
+      <AddNewStudent/>
       </div>
       <Footer/>
     </div>
