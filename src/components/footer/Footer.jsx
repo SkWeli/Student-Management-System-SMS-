@@ -3,7 +3,12 @@ import './footer.css';
 
 const Footer = () => {
   return (
-    <footer className="bg-light border-top py-2 fixed-bottom">
+    <footer className="bg-white border-top py-1 fixed-bottom small"
+     style={{ 
+      padding: '5px 0', 
+      fontSize: '11px', 
+      height: '25px' 
+      }}>
       <div className="container d-flex justify-content-between align-items-center">
         <div>
           <a href="#" className="text-dark me-3 text-decoration-none">Privacy Policy</a>

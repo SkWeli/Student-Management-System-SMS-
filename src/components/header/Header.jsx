@@ -7,17 +7,17 @@ const Header = () => {
   return (
     <>
       {/* Top Row for Log Out */}
-      <div className="bg-white py-2 shadow-sm">
+      <div className="bg-white py-1 shadow-sm">
         <Container className="d-flex justify-content-end">
-          <button className="btn btn-light d-flex align-items-center border-0">
-            <BsBoxArrowRight size={20} className="me-2 text-secondary" />
+          <button className="btn btn-light btn-sm d-flex align-items-center border-0">
+            <BsBoxArrowRight size={16} className="me-2 text-secondary" />
             <span className="text-secondary">Log Out</span>
           </button>
         </Container>
       </div>
 
       {/* Navigation Bar */}
-      <nav className="navbar navbar-expand-lg" 
+      <nav className="navbar navbar-expand-lg " 
       style={{ 
         background: 'linear-gradient(to right, #003087,rgb(21, 83, 200),rgb(12, 131, 243))',
         borderRadius: '0 0 15px 15px',

@@ -1,14 +1,15 @@
 import React from "react";
 
-import { StudentForm, StudentList, Header, Footer} from './components';
+import { Header, Footer} from './components';
+import { StudentListPage} from './containers';
 
 const App = () => {
   return (
     <div className="App">
       <Header/>
       <div className="container">
-      <StudentForm/>
-      <StudentList/>
+      
+      <StudentListPage/>
       </div>
       <Footer/>
     </div>

@@ -1,0 +1,14 @@
+.custom-table tbody tr:nth-child(odd) {
+    background-color: #d0e2ff !important; /* Light Blue */
+    color: black !important;
+}
+
+.custom-table tbody tr:nth-child(even) {
+    background-color: white !important; /* White */
+    color: black !important;
+}
+
+.custom-table th {
+    background-color: #0d6efd !important; /* Dark Blue Header */
+    color: white !important;
+}
