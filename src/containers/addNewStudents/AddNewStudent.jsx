@@ -1,7 +1,25 @@
-import React from "react";
-import { Container, Form, Button } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Form, Button, Dropdown } from 'react-bootstrap';
 
 const AddNewStudent = () => {
+  const [selectedCourses, setSelectedCourses] = useState([]);
+  const courses = [
+          'CS3202 - UX and UI Engineering',
+          'SE3203 - Software Construction Technologies and Tools',
+          'SE3202 - Software Modelling',
+          'SE3012 - Engineering Foundation for Software',
+          'SE3204 - Software Architecture and Design',
+          'CS3202 - UX and UI Engineering',
+        ];
+
+  const handleCourseToggle = (course) => {
+    if (selectedCourses.includes(course)) {
+      setSelectedCourses(selectedCourses.filter((c) => c !== course));
+    } else {
+      setSelectedCourses([...selectedCourses, course]);
+    }
+  };
+
   return (
     <Container
       className="mt-4 p-4"
@@ -10,9 +28,13 @@ const AddNewStudent = () => {
         borderRadius: '10px',
         boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
         maxWidth: '600px',
+        marginLeft: 'auto',
+        marginRight: 'auto',
       }}
     >
-      <h2 className="text-center mb-4">Add New Students</h2>
+      <h2 className="text-center mb-5" style={{ fontSize: '1.5rem' }}>
+        Add New Student
+      </h2>
       <Form>
         <div className="row">
           <div className="col-md-6 mb-3">
@@ -69,19 +91,54 @@ const AddNewStudent = () => {
           <div className="col-md-6 mb-3">
             <Form.Group controlId="coursesEnrolled">
               <Form.Label>Courses Enrolled</Form.Label>
-              <Form.Select>
-                <option value="">--</option>
-                <option value="Course 1">Course 1</option>
-                <option value="Course 2">Course 2</option>
-                <option value="Course 3">Course 3</option>
-              </Form.Select>
+              <Dropdown>
+                <Dropdown.Toggle
+                  variant="outline-secondary"
+                  id="dropdown-courses"
+                  style={{ width: '100%', textAlign: 'left' }}
+                >
+                  Select Courses
+                </Dropdown.Toggle>
+                <Dropdown.Menu style={{ width: '100%' }}>
+                  {courses.map((course) => (
+                    <Dropdown.Item
+                      key={course}
+                      as="label"
+                      className="d-flex align-items-center"
+                      onClick={(e) => e.preventDefault()}
+                    >
+                      <Form.Check
+                        type="checkbox"
+                        checked={selectedCourses.includes(course)}
+                        onChange={() => handleCourseToggle(course)}
+                        label={course}
+                        className="me-2"
+                      />
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
             </Form.Group>
           </div>
         </div>
 
-        <div className="d-flex justify-content-between mt-4">
+        <div className="d-flex justify-content-between mt-5">
           <Button variant="outline-secondary" className="d-flex align-items-center">
-            <i className="bi bi-plus-circle me-2"></i>
+            <span
+              className="me-2"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '20px',
+                height: '20px',
+                border: '1px solid #6c757d',
+                borderRadius: '50%',
+                fontSize: '14px',
+              }}
+            >
+              +
+            </span>
             Add another
           </Button>
           <Button variant="primary" type="submit">
@@ -91,6 +148,6 @@ const AddNewStudent = () => {
       </Form>
     </Container>
   );
-}
+};
 
 export default AddNewStudent;

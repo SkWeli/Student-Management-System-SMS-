@@ -9,7 +9,7 @@ const App = () => {
       <Header/>
       <div className="container">
       
-      <CourseHistory/>
+      <AddNewStudent/>
       </div>
       <Footer/>
     </div>
