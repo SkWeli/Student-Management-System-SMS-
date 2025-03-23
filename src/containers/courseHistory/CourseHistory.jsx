@@ -45,9 +45,22 @@ const CourseHistory = () => {
   };
 
   return (
+    <div>
+      {/* Heading outside the container */}
+      <h2 
+        className="text-start px-5 mb-3 ms-2 mt-4 d-inline-block"
+        style={{
+          backgroundColor: '#28A745',
+          color: 'white',
+          padding: '10px 15px',
+          borderRadius: '5px',
+          fontWeight: 'normal', // Not bold
+          fontSize: '1rem',
+        }}
+      >
+        Course History
+      </h2>
     <Container className="mt-4">
-      <h2 className="text-center mb-4">Course History</h2>
-
       {/* Year Tabs */}
       <Nav variant="pills" className="justify-content-center mb-3">
         {['Year 01', 'Year 02', 'Year 03', 'Year 04'].map((year) => (
@@ -55,10 +68,12 @@ const CourseHistory = () => {
             <Nav.Link
               active={activeYear === year}
               onClick={() => setActiveYear(year)}
-              className="mx-1"
+              className="mx-3 px-5"
               style={{
-                backgroundColor: activeYear === year ? '#005EB8' : '#E9ECEF',
+                fontWeight: 'bold',
+                backgroundColor: activeYear === year ? '#005EB8' : 'white',
                 color: activeYear === year ? 'white' : 'black',
+                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
               }}
             >
               {year}
@@ -67,39 +82,28 @@ const CourseHistory = () => {
         ))}
       </Nav>
 
-      {/* Student Info */}
-      <div className="mb-4">
-        <div className="row">
-          <div className="col-md-6">
-            <strong>Student Name</strong>
-            <p>{`${student.firstName} ${student.lastName}`}</p>
-          </div>
-          <div className="col-md-6">
-            <strong>Degree</strong>
-            <p>{student.degree}</p>
-          </div>
-        </div>
-      </div>
+      
 
       {/* Semester Tabs and Courses */}
       <Container
-        className="p-4"
+        className="p-4 px-5"
         style={{
           backgroundColor: 'white',
           borderRadius: '10px',
           boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
         }}
       >
-        <Nav variant="pills" className="mb-3">
+        <Nav variant="pills" className="justify-content-end mb-3">
           {['Semester 01', 'Semester 02'].map((semester) => (
             <Nav.Item key={semester}>
               <Nav.Link
                 active={activeSemester === semester}
                 onClick={() => setActiveSemester(semester)}
-                className="mx-1"
+                className="mx-0"
                 style={{
-                  backgroundColor: activeSemester === semester ? '#F28C38' : '#E9ECEF',
+                  backgroundColor: activeSemester === semester ? '#F28C38' : '#E6E8EB',
                   color: activeSemester === semester ? 'white' : 'black',
+                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
                 }}
               >
                 {semester}
@@ -108,12 +112,33 @@ const CourseHistory = () => {
           ))}
         </Nav>
 
-        <h5>Courses Enrolled in {activeSemester}</h5>
+        {/* Student Info */}
+      <div className="mb-4">
+        <div className="row">
+        <div className="col-md-6">
+            <small style={{ color: '#6C757D' }}>Student Name</small>
+            <p style={{ fontWeight: 'bold', color: 'black' }}>{`${student.firstName} ${student.lastName}`}</p>
+          </div>
+          <div className="col-md-6">
+            <small style={{ color: '#6C757D' }}>Degree</small>
+            <p style={{ fontWeight: 'bold', color: 'black' }}>{student.degree}</p>
+          </div>
+        </div>
+      </div>
+
+        <h5
+          className="text-center mb-5"
+          style={{
+            fontSize: '1.5rem', // Increased font size
+            color: '#003087', // Dark blue
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)', // Shadow
+          }}
+        >Courses Enrolled in {activeSemester}</h5>
         <div className="row">
           <div className="col-md-6">
             <ul className="list-unstyled">
               {student.courses[activeYear]['Semester 01'].map((course, index) => (
-                <li key={index} className="mb-1">
+                <li key={index} className="mb-1" style={{ fontWeight: 'bold', color: 'black' }}>
                   {course}
                 </li>
               ))}
@@ -122,7 +147,7 @@ const CourseHistory = () => {
           <div className="col-md-6">
             <ul className="list-unstyled">
               {student.courses[activeYear]['Semester 02'].map((course, index) => (
-                <li key={index} className="mb-1">
+                <li key={index} className="mb-1" style={{ fontWeight: 'bold', color: 'black' }}>
                   {course}
                 </li>
               ))}
@@ -131,6 +156,7 @@ const CourseHistory = () => {
         </div>
       </Container>
     </Container>
+    </div>
   );
 };
 

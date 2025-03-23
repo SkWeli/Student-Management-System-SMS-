@@ -9,7 +9,7 @@ const App = () => {
       <Header/>
       <div className="container">
       
-      <StudentDetailSheet/>
+      <CourseHistory/>
       </div>
       <Footer/>
     </div>
