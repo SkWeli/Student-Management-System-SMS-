@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container, Button } from 'react-bootstrap';
+import "./studentDetailSheet.css";
 
 const StudentDetailSheet = () => {
   // Dummy data for the student (replace with dynamic data later)
@@ -25,57 +26,68 @@ const StudentDetailSheet = () => {
   };
 
   return (
+    <div>
+      {/* Heading outside the container */}
+      <h2 
+        className="text-start mb-2 ms-2 mt-4 d-inline-block"
+        style={{
+          backgroundColor: '#28A745',
+          color: 'white',
+          padding: '10px 15px',
+          borderRadius: '5px',
+          fontWeight: 'normal', // Not bold
+          fontSize: '1.25rem',
+        }}
+      >
+        Student Detail Sheet
+      </h2>
     <Container
-      className="mt-4 p-4"
+      className="mt-4 p-5 custom-container"
       style={{
         backgroundColor: 'white',
         borderRadius: '10px',
         boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-        maxWidth: '600px',
+        maxWidth: '1200px',
       }}
     >
-      <h2 className="text-center mb-4">Student Detail Sheet</h2>
-
       {/* Student Details */}
       <div className="mb-4">
-        <div className="row">
-          <div className="col-md-6 mb-2">
-            <strong>First Name</strong>
-            <p>{student.firstName}</p>
+          <div className="row">
+            <div className="col-md-6 mb-2">
+              <small style={{ color: '#6C757D' }}>First Name</small>
+              <p style={{ fontWeight: 'bold', color: 'black' }}>{student.firstName}</p>
+            </div>
+            <div className="col-md-6 mb-2">
+              <small style={{ color: '#6C757D' }}>Last Name</small>
+              <p style={{ fontWeight: 'bold', color: 'black' }}>{student.lastName}</p>
+            </div>
           </div>
-          <div className="col-md-6 mb-2">
-            <strong>Last Name</strong>
-            <p>{student.lastName}</p>
+          <div className="mb-2">
+            <small style={{ color: '#6C757D' }}>Current Address</small>
+            <p style={{ fontWeight: 'bold', color: 'black' }}>{student.currentAddress}</p>
+          </div>
+          <div className="row">
+            <div className="col-md-6 mb-2">
+              <small style={{ color: '#6C757D' }}>Birthday</small>
+              <p style={{ fontWeight: 'bold', color: 'black' }}>{student.birthday}</p>
+            </div>
+            <div className="col-md-6 mb-2">
+              <small style={{ color: '#6C757D' }}>Student ID Number</small>
+              <p style={{ fontWeight: 'bold', color: 'black' }}>{student.studentId}</p>
+            </div>
+          </div>
+          <div className="mb-2">
+            <small style={{ color: '#6C757D' }}>Degree</small>
+            <p style={{ fontWeight: 'bold', color: 'black' }}>{student.degree}</p>
           </div>
         </div>
-        <div className="mb-2">
-          <strong>Current Address</strong>
-          <p>{student.currentAddress}</p>
-        </div>
-        <div className="row">
-          <div className="col-md-6 mb-2">
-            <strong>Birthday</strong>
-            <p>{student.birthday}</p>
-          </div>
-          <div className="col-md-6 mb-2">
-            <strong>Student ID</strong>
-            <p>{student.studentId}</p>
-          </div>
-        </div>
-        <div className="mb-2">
-          <strong>Degree</strong>
-          <p>{student.degree}</p>
-        </div>
-      </div>
 
       {/* Course History */}
-      <div className="mb-4">
-        <h5 className="d-flex align-items-center">
-          Course History
-          <Button variant="link" className="ms-2 p-0" style={{ fontSize: '0.9rem', color: '#007BFF' }}>
-            See More
-          </Button>
-        </h5>
+      <div className="mb-">
+        <h6 className="d-flex align-items-center">
+        <span className="me-3">Course Enrolled</span>
+          <Button style={{ backgroundColor: '#003087', borderColor: '#003087' }}>Course History</Button>
+        </h6>
         <ul className="list-unstyled">
           {student.courses.map((course, index) => (
             <li key={index} className="mb-1">
@@ -91,6 +103,7 @@ const StudentDetailSheet = () => {
         <Button variant="primary">Edit Details</Button>
       </div>
     </Container>
+    </div>
   );
 };
 
