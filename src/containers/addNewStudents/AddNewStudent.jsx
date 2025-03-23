@@ -101,20 +101,19 @@ const AddNewStudent = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{ width: '100%' }}>
                   {courses.map((course) => (
-                    <Dropdown.Item
+                    <div
                       key={course}
-                      as="label"
-                      className="d-flex align-items-center"
-                      onClick={(e) => e.preventDefault()}
+                      className="px-3 py-2 d-flex align-items-center"
+                      onClick={(e) => e.stopPropagation()} // Prevent dropdown from closing
                     >
                       <Form.Check
                         type="checkbox"
+                        id={`course-${course}`}
                         checked={selectedCourses.includes(course)}
                         onChange={() => handleCourseToggle(course)}
                         label={course}
-                        className="me-2"
                       />
-                    </Dropdown.Item>
+                    </div>
                   ))}
                 </Dropdown.Menu>
               </Dropdown>
