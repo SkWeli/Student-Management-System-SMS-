@@ -1,9 +1,11 @@
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { IoSearchOutline } from "react-icons/io5";
 import "./studentListPage.css";
 
 const StudentListPage = () => {
+  const navigate = useNavigate();
+
   const dummyStudents = [
     { studentNumber: '00001541', firstName: 'Sasini', lastName: 'Lekamge', degree: 'Computer Science', studentId: '054760', birthday: '2001-01-01' },
     { studentNumber: '00001542', firstName: 'Dinuka', lastName: 'Wickramasinghe', degree: 'Computer Science', studentId: '054368', birthday: '2002-05-05' },
@@ -19,6 +21,11 @@ const StudentListPage = () => {
     { studentNumber: '00001550', firstName: 'Sumudu', lastName: 'Rathnayake', degree: 'Computer Science', studentId: '056165', birthday: '2011-10-15' },
   ];
 
+  // Function to handle double-click navigation
+  const handleDoubleClick = (studentId) => {
+    navigate(`/student-detail/${studentId}`); // Navigate to StudentDetailSheet with studentId
+  };
+
   return (
     <div className="mt-4">
       {/* Search Bar and Add New Students Button */}
@@ -33,9 +40,11 @@ const StudentListPage = () => {
             placeholder="Search for a student by name or ID"
           />
         </div>
+        <Link to="/add-new-student">
         <button className="btn btn-primary">
           Add New Student
         </button>
+        </Link>
         </div>
       <div className="table-responsive">
         <table className="table table-bordered table-hover">
@@ -52,7 +61,11 @@ const StudentListPage = () => {
           <tbody>
             {dummyStudents.length > 0 ? (
               dummyStudents.map((student) => (
-                <tr key={student.studentNumber}>
+                <tr 
+                  key={student.studentNumber}
+                  onDoubleClick={() => handleDoubleClick(student.studentId)} // Add double-click handler
+                  style={{ cursor: 'pointer' }} // Optional: Add pointer cursor to indicate clickable row
+                >
                   <td>{student.studentNumber}</td>
                   <td>{student.firstName}</td>
                   <td>{student.lastName}</td>

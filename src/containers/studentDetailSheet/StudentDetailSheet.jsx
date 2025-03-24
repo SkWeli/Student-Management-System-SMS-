@@ -1,8 +1,11 @@
 import React from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { Container, Button } from 'react-bootstrap';
 import "./studentDetailSheet.css";
 
 const StudentDetailSheet = () => {
+  const { studentId } = useParams();
+
   // Dummy data for the student (replace with dynamic data later)
   const student = {
     firstName: 'Senuda',
@@ -86,7 +89,9 @@ const StudentDetailSheet = () => {
       <div className="mb-">
         <h6 className="d-flex align-items-center">
         <span className="me-3">Course Enrolled</span>
+        <Link to="/course-history/${student.studentId}">
           <Button style={{ backgroundColor: '#003087', borderColor: '#003087' }}>Course History</Button>
+          </Link>
         </h6>
         <ul className="list-unstyled">
           {student.courses.map((course, index) => (
@@ -100,7 +105,9 @@ const StudentDetailSheet = () => {
       {/* Buttons */}
       <div className="d-flex justify-content-between">
         <Button variant="danger">Remove Student</Button>
-        <Button variant="primary">Edit Details</Button>
+        <Link to="/edit-student/${student.studentId}">
+          <Button variant="primary">Edit Details</Button>
+        </Link>
       </div>
     </Container>
     </div>
