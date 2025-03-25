@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import './logIn.css'; // Create this CSS file for custom styles
+import logo from '../../assets/KDU_logo.png';
+import backgroundImage from '../../assets/backgroundImage.jpeg';
 
 const LogIn = () => {
   const navigate = useNavigate();
@@ -38,8 +39,9 @@ const LogIn = () => {
             {/* Logo */}
             <div className="text-center mb-4">
               <img
-                src="https://via.placeholder.com/100" // Replace with actual logo URL
+                src={logo}
                 alt="KDU Logo"
+                style={{width: '120px', height: '120px'}}
                 className="login-logo"
               />
             </div>
@@ -104,7 +106,7 @@ const LogIn = () => {
           md={6}
           className="d-none d-md-block background-image"
           style={{
-            backgroundImage: `url('https://via.placeholder.com/600x800')`, // Replace with actual image URL
+            backgroundImage: `url(${backgroundImage})`, 
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
