@@ -27,11 +27,14 @@ const LogIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting login request with:", formData); // Log the form data
     try {
       const response = await axios.post('http://localhost:8080/api/auth/login', {
         email: formData.email,
         password: formData.password,
       });
+      console.log("Response from backend:", response); // Log the full response
+      console.log("Response data:", response.data); // Log the response data
 
       // Check if the response contains a token
       if (response.data && response.data.token) {
@@ -42,18 +45,23 @@ const LogIn = () => {
         navigate('/');
       } else {
         setError('Login successful, but no token received. Please contact support.');
+        console.log('No token in response:', response.data);
       }
     } catch (err) {
+      console.error("Login request failed:", err); // Log the full error
       // Improved error handling
       if (err.response) {
         // Backend responded with an error status (e.g., 401, 400)
         setError(err.response.data.error || 'Invalid email or password');
+        console.log("Error response from backend:", err.response);
       } else if (err.request) {
         // No response from backend (e.g., network error)
         setError('Network error. Please check if the backend is running.');
+        console.log("No response received:", err.request);
       } else {
         // Other errors (e.g., request setup error)
         setError('An unexpected error occurred. Please try again.');
+        console.log("Unexpected error:", err.message);
       }
       console.error('Login error:', err); // For debugging
     }
