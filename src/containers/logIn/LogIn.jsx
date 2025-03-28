@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import logo from '../../assets/KDU_logo.png';
 import backgroundImage from '../../assets/backgroundImage.jpeg';
 
@@ -14,6 +15,8 @@ const LogIn = () => {
     rememberMe: false,
   });
 
+  const [error, setError] = useState('');
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -22,12 +25,38 @@ const LogIn = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add login logic here (e.g., API call to authenticate user)
-    console.log('Login Data:', formData);
-    // For now, navigate to StudentListPage on successful login
-    navigate('/');
+    try {
+      const response = await axios.post('http://localhost:8080/api/auth/login', {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      // Check if the response contains a token
+      if (response.data && response.data.token) {
+        // Store the token in localStorage
+        localStorage.setItem('token', response.data.token);
+        console.log('JWT Token stored:', response.data.token); // For debugging
+        // Navigate to the homepage
+        navigate('/');
+      } else {
+        setError('Login successful, but no token received. Please contact support.');
+      }
+    } catch (err) {
+      // Improved error handling
+      if (err.response) {
+        // Backend responded with an error status (e.g., 401, 400)
+        setError(err.response.data.error || 'Invalid email or password');
+      } else if (err.request) {
+        // No response from backend (e.g., network error)
+        setError('Network error. Please check if the backend is running.');
+      } else {
+        // Other errors (e.g., request setup error)
+        setError('An unexpected error occurred. Please try again.');
+      }
+      console.error('Login error:', err); // For debugging
+    }
   };
 
   return (
