@@ -1,22 +1,65 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Dropdown } from 'react-bootstrap';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AddNewStudent = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    currentAddress: '',
+    birthday: '',
+    idNumber: '',
+    degree: '',
+  });
   const [selectedCourses, setSelectedCourses] = useState([]);
+  const [error, setError] = useState('');
+
   const courses = [
-          'CS3202 - UX and UI Engineering',
-          'SE3203 - Software Construction Technologies and Tools',
-          'SE3202 - Software Modelling',
-          'SE3012 - Engineering Foundation for Software',
-          'SE3204 - Software Architecture and Design',
-          'CS3202 - UX and UI Engineering',
-        ];
+    'CS3202 - UX and UI Engineering',
+    'SE3203 - Software Construction Technologies and Tools',
+    'SE3202 - Software Modelling',
+    'SE3012 - Engineering Foundation for Software',
+    'SE3204 - Software Architecture and Design',
+    'CS3202 - UX and UI Engineering',
+  ];
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const handleCourseToggle = (course) => {
     if (selectedCourses.includes(course)) {
       setSelectedCourses(selectedCourses.filter((c) => c !== course));
     } else {
       setSelectedCourses([...selectedCourses, course]);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const studentData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        currentAddress: formData.currentAddress,
+        birthday: formData.birthday,
+        idNumber: formData.idNumber,
+        degree: formData.degree,
+        coursesEnrolled: selectedCourses,
+      };
+
+      const response = await axios.post('http://localhost:8080/api/students', studentData);
+      console.log('Student added:', response.data);
+      navigate('/student-list'); // Navigate back to the student list page
+    } catch (err) {
+      console.error('Error adding student:', err);
+      setError('Failed to add student. Please try again.');
     }
   };
 
@@ -35,18 +78,31 @@ const AddNewStudent = () => {
       <h2 className="text-center mb-5" style={{ fontSize: '1.5rem' }}>
         Add New Student
       </h2>
-      <Form>
+      <Form onSubmit={handleSubmit}>
+        {error && <p className="text-danger text-center">{error}</p>}
         <div className="row">
           <div className="col-md-6 mb-3">
             <Form.Group controlId="firstName">
               <Form.Label>First Name</Form.Label>
-              <Form.Control type="text" placeholder="" />
+              <Form.Control
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+              />
             </Form.Group>
           </div>
           <div className="col-md-6 mb-3">
             <Form.Group controlId="lastName">
               <Form.Label>Last Name</Form.Label>
-              <Form.Control type="text" placeholder="" />
+              <Form.Control
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+              />
             </Form.Group>
           </div>
         </div>
@@ -54,7 +110,13 @@ const AddNewStudent = () => {
         <div className="mb-3">
           <Form.Group controlId="currentAddress">
             <Form.Label>Current Address</Form.Label>
-            <Form.Control type="text" placeholder="" />
+            <Form.Control
+              type="text"
+              name="currentAddress"
+              value={formData.currentAddress}
+              onChange={handleChange}
+              required
+            />
           </Form.Group>
         </div>
 
@@ -62,13 +124,25 @@ const AddNewStudent = () => {
           <div className="col-md-6 mb-3">
             <Form.Group controlId="birthday">
               <Form.Label>Birthday</Form.Label>
-              <Form.Control type="date" placeholder="" />
+              <Form.Control
+                type="date"
+                name="birthday"
+                value={formData.birthday}
+                onChange={handleChange}
+                required
+              />
             </Form.Group>
           </div>
           <div className="col-md-6 mb-3">
             <Form.Group controlId="idNumber">
               <Form.Label>ID Number</Form.Label>
-              <Form.Control type="text" placeholder="" />
+              <Form.Control
+                type="text"
+                name="idNumber"
+                value={formData.idNumber}
+                onChange={handleChange}
+                required
+              />
             </Form.Group>
           </div>
         </div>
@@ -77,7 +151,12 @@ const AddNewStudent = () => {
           <div className="col-md-6 mb-3">
             <Form.Group controlId="degree">
               <Form.Label>Degree</Form.Label>
-              <Form.Select>
+              <Form.Select
+                name="degree"
+                value={formData.degree}
+                onChange={handleChange}
+                required
+              >
                 <option value="">--</option>
                 <option value="Computer Science">Computer Science</option>
                 <option value="Software Engineering">Software Engineering</option>
@@ -104,7 +183,7 @@ const AddNewStudent = () => {
                     <div
                       key={course}
                       className="px-3 py-2 d-flex align-items-center"
-                      onClick={(e) => e.stopPropagation()} // Prevent dropdown from closing
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <Form.Check
                         type="checkbox"

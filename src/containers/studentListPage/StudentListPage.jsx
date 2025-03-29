@@ -1,29 +1,51 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { IoSearchOutline } from "react-icons/io5";
-import "./studentListPage.css";
+import { IoSearchOutline } from 'react-icons/io5';
+import axios from 'axios';
+import './studentListPage.css';
 
 const StudentListPage = () => {
   const navigate = useNavigate();
+  const [students, setStudents] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const dummyStudents = [
-    { studentNumber: '00001541', firstName: 'Sasini', lastName: 'Lekamge', degree: 'Computer Science', studentId: '054760', birthday: '2001-01-01' },
-    { studentNumber: '00001542', firstName: 'Dinuka', lastName: 'Wickramasinghe', degree: 'Computer Science', studentId: '054368', birthday: '2002-05-05' },
-    { studentNumber: '00001543', firstName: 'Tharuka', lastName: 'Bandara', degree: 'Computer Science', studentId: '051564', birthday: '2002-01-05' },
-    { studentNumber: '00001544', firstName: 'Nuwandu', lastName: 'Kithara', degree: 'Software Engineering', studentId: '052356', birthday: '2001-01-05' },
-    { studentNumber: '00001545', firstName: 'Senudu', lastName: 'Wickrama', degree: 'Software Engineering', studentId: '058644', birthday: '2002-06-12' },
-    { studentNumber: '00001546', firstName: 'Hasindu', lastName: 'Nimesh', degree: 'Computer Science', studentId: '056156', birthday: '2003-03-14' },
-    { studentNumber: '00001547', firstName: 'Thenuke', lastName: 'Perera', degree: 'Computer Engineering', studentId: '056156', birthday: '2001-01-12' },
-    { studentNumber: '00001548', firstName: 'Tironi', lastName: 'de Silva', degree: 'Data Science', studentId: '056546', birthday: '2000-07-05' },
-    { studentNumber: '00001549', firstName: 'Udani', lastName: 'Amaraja', degree: 'Data Science', studentId: '058795', birthday: '2000-04-05' },
-    { studentNumber: '00001550', firstName: 'Maithi', lastName: 'Induwari', degree: 'Information Technology', studentId: '056165', birthday: '2011-10-15' },
-    { studentNumber: '00001551', firstName: 'Haritha', lastName: 'Naveen', degree: 'Information Systems', studentId: '057889', birthday: '2012-05-05' },
-    { studentNumber: '00001550', firstName: 'Sumudu', lastName: 'Rathnayake', degree: 'Computer Science', studentId: '056165', birthday: '2011-10-15' },
-  ];
+  // Fetch students from the backend on component mount
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/students');
+        setStudents(response.data);
+        setFilteredStudents(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching students:', err);
+        setError('Failed to fetch students. Please try again.');
+        setLoading(false);
+      }
+    };
+
+    fetchStudents();
+  }, []);
+
+  // Handle search input
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    const filtered = students.filter(
+      (student) =>
+        student.firstName.toLowerCase().includes(query) ||
+        student.lastName.toLowerCase().includes(query) ||
+        student.idNumber.toLowerCase().includes(query)
+    );
+    setFilteredStudents(filtered);
+  };
 
   // Function to handle double-click navigation
-  const handleDoubleClick = (studentId) => {
-    navigate(`/student-detail/${studentId}`); // Navigate to StudentDetailSheet with studentId
+  const handleDoubleClick = (studentNumber) => {
+    navigate(`/student-detail/${studentNumber}`); // Use studentNumber for navigation
   };
 
   return (
@@ -31,59 +53,68 @@ const StudentListPage = () => {
       {/* Search Bar and Add New Students Button */}
       <div className="d-flex justify-content-between mb-3">
         <div className="input-group" style={{ maxWidth: '700px' }}>
-        <span className="input-group-text">
+          <span className="input-group-text">
             <IoSearchOutline />
-        </span>
+          </span>
           <input
             type="text"
             className="form-control"
             placeholder="Search for a student by name or ID"
+            value={searchQuery}
+            onChange={handleSearch}
           />
         </div>
         <Link to="/add-new-student">
-        <button className="btn btn-primary">
-          Add New Student
-        </button>
+          <button className="btn btn-primary">
+            Add New Student
+          </button>
         </Link>
-        </div>
-      <div className="table-responsive">
-        <table className="table table-bordered table-hover">
-          <thead className="table-primary text-white">
-            <tr>
-              <th>Student Number</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Degree</th>
-              <th>Student ID</th>
-              <th>Birthday</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dummyStudents.length > 0 ? (
-              dummyStudents.map((student) => (
-                <tr 
-                  key={student.studentNumber}
-                  onDoubleClick={() => handleDoubleClick(student.studentId)} // Add double-click handler
-                  style={{ cursor: 'pointer' }} // Optional: Add pointer cursor to indicate clickable row
-                >
-                  <td>{student.studentNumber}</td>
-                  <td>{student.firstName}</td>
-                  <td>{student.lastName}</td>
-                  <td>{student.degree}</td>
-                  <td>{student.studentId}</td>
-                  <td>{student.birthday}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" className="text-center">
-                  No students available.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
       </div>
+
+      {loading ? (
+        <p>Loading students...</p>
+      ) : error ? (
+        <p className="text-danger">{error}</p>
+      ) : (
+        <div className="table-responsive">
+          <table className="table table-bordered table-hover">
+            <thead className="table-primary text-white">
+              <tr>
+                <th>Student Number</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Degree</th>
+                <th>Student ID</th>
+                <th>Birthday</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredStudents.length > 0 ? (
+                filteredStudents.map((student) => (
+                  <tr
+                    key={student.studentNumber}
+                    onDoubleClick={() => handleDoubleClick(student.studentNumber)} // Use studentNumber
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <td>{student.studentNumber}</td>
+                    <td>{student.firstName}</td>
+                    <td>{student.lastName}</td>
+                    <td>{student.degree}</td>
+                    <td>{student.idNumber}</td>
+                    <td>{student.birthday}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="text-center">
+                    No students available.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };
