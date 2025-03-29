@@ -5,7 +5,7 @@ import axios from 'axios';
 import logo from '../../assets/KDU_logo.png';
 import backgroundImage from '../../assets/backgroundImage.jpeg';
 
-const LogIn = () => {
+const LogIn = ({ onLogin }) => {
   const navigate = useNavigate();
 
   // State for form fields
@@ -40,7 +40,9 @@ const LogIn = () => {
       if (response.data && response.data.token) {
         // Store the token in localStorage
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('isLoggedIn', 'true');
         console.log('JWT Token stored:', response.data.token); // For debugging
+        onLogin();
         // Navigate to the homepage
         navigate('/');
       } else {

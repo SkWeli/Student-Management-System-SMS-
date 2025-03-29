@@ -10,10 +10,20 @@ const AppContent = () => {
 
   // Check if the user is logged in (using localStorage as a placeholder)
   useEffect(() => {
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    setIsLoggedIn(loggedIn);
+    const checkLoginStatus = () => {
+      const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      setIsLoggedIn(loggedIn);
+    };
+    
+    checkLoginStatus();
+  
+    // Listen for storage changes
+    window.addEventListener('storage', checkLoginStatus);
+    
+    return () => {
+      window.removeEventListener('storage', checkLoginStatus);
+    };
   }, []);
-
   // Function to handle login
   const handleLogin = () => {
     setIsLoggedIn(true);
