@@ -22,7 +22,7 @@ const AddNewStudent = () => {
     'SE3202 - Software Modelling',
     'SE3012 - Engineering Foundation for Software',
     'SE3204 - Software Architecture and Design',
-    'CS3202 - UX and UI Engineering',
+    
   ];
 
   const handleChange = (e) => {
@@ -44,6 +44,10 @@ const AddNewStudent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('token'); // Get stored JWT token (after login)
+      if (!token) {
+        throw new Error('No token found in localStorage');
+      }
       const studentData = {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -53,15 +57,25 @@ const AddNewStudent = () => {
         degree: formData.degree,
         coursesEnrolled: selectedCourses,
       };
-
-      const response = await axios.post('http://localhost:8080/api/students', studentData);
+  
+      const response = await axios.post(
+        'http://localhost:8080/api/students',
+        studentData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json' // Attach JWT token
+          },
+        }
+      );
       console.log('Student added:', response.data);
-      navigate('/student-list'); // Navigate back to the student list page
+      navigate('/');
     } catch (err) {
-      console.error('Error adding student:', err);
-      setError('Failed to add student. Please try again.');
+      console.error('Error:', err.response?.data);
+      setError(err.response?.data?.message || 'Failed to add student. Check console.');
     }
   };
+    
 
   return (
     <Container

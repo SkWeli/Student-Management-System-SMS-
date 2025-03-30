@@ -12,25 +12,35 @@ const StudentListPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Fetch students from the backend on component mount
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/students');
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('No token found, please log in.');
+        }
+        const response = await axios.get('http://localhost:8080/api/students', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
         setStudents(response.data);
         setFilteredStudents(response.data);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching students:', err);
-        setError('Failed to fetch students. Please try again.');
+        setError('Failed to fetch students. Please log in again.');
         setLoading(false);
+        if (err.response && err.response.status === 401) {
+          navigate('/login'); // Redirect to login on 401
+        }
       }
     };
 
     fetchStudents();
-  }, []);
+  }, [navigate]);
 
-  // Handle search input
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
@@ -43,14 +53,16 @@ const StudentListPage = () => {
     setFilteredStudents(filtered);
   };
 
-  // Function to handle double-click navigation
-  const handleDoubleClick = (studentNumber) => {
-    navigate(`/student-detail/${studentNumber}`); // Use studentNumber for navigation
+  const handleDoubleClick = (id) => {
+    navigate(`/student-detail/${id}`);
+  };
+
+  const formatStudentNumber = (id) => {
+    return String(id).padStart(8, '0');
   };
 
   return (
     <div className="mt-4">
-      {/* Search Bar and Add New Students Button */}
       <div className="d-flex justify-content-between mb-3">
         <div className="input-group" style={{ maxWidth: '700px' }}>
           <span className="input-group-text">
@@ -65,9 +77,7 @@ const StudentListPage = () => {
           />
         </div>
         <Link to="/add-new-student">
-          <button className="btn btn-primary">
-            Add New Student
-          </button>
+          <button className="btn btn-primary">Add New Student</button>
         </Link>
       </div>
 
@@ -93,10 +103,10 @@ const StudentListPage = () => {
                 filteredStudents.map((student) => (
                   <tr
                     key={student.studentNumber}
-                    onDoubleClick={() => handleDoubleClick(student.studentNumber)} // Use studentNumber
+                    onDoubleClick={() => handleDoubleClick(student.studentNumber)}
                     style={{ cursor: 'pointer' }}
                   >
-                    <td>{student.studentNumber}</td>
+                    <td>{formatStudentNumber(student.id)}</td>
                     <td>{student.firstName}</td>
                     <td>{student.lastName}</td>
                     <td>{student.degree}</td>

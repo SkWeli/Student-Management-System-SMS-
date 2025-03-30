@@ -29,10 +29,19 @@ const LogIn = ({ onLogin }) => {
     e.preventDefault();
     console.log("Submitting login request with:", formData); // Log the form data
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/login', {
-        email: formData.email,
-        password: formData.password,
-      });
+      // Send login request to backend (JWT-based endpoint)
+      const response = await axios.post(
+        'http://localhost:8080/api/auth/login',
+        {
+          username: formData.email, // Assuming email is used as username
+          password: formData.password,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
       console.log("Response from backend:", response); // Log the full response
       console.log("Response data:", response.data); // Log the response data
 
@@ -42,7 +51,7 @@ const LogIn = ({ onLogin }) => {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('isLoggedIn', 'true');
         console.log('JWT Token stored:', response.data.token); // For debugging
-        onLogin();
+        onLogin(); // Notify App component of successful login
         // Navigate to the homepage
         navigate('/');
       } else {
@@ -51,7 +60,6 @@ const LogIn = ({ onLogin }) => {
       }
     } catch (err) {
       console.error("Login request failed:", err); // Log the full error
-      // Improved error handling
       if (err.response) {
         // Backend responded with an error status (e.g., 401, 400)
         setError(err.response.data.error || 'Invalid email or password');
@@ -65,7 +73,6 @@ const LogIn = ({ onLogin }) => {
         setError('An unexpected error occurred. Please try again.');
         console.log("Unexpected error:", err.message);
       }
-      console.error('Login error:', err); // For debugging
     }
   };
 
@@ -80,7 +87,7 @@ const LogIn = ({ onLogin }) => {
               <img
                 src={logo}
                 alt="KDU Logo"
-                style={{width: '120px', height: '120px'}}
+                style={{ width: '120px', height: '120px' }}
                 className="login-logo"
               />
             </div>
@@ -94,6 +101,7 @@ const LogIn = ({ onLogin }) => {
             {/* Login Form */}
             <h5 className="text-center mb-4">Log In</h5>
             <p className="text-center mb-4">Sign in to stay connected.</p>
+            {error && <p className="text-danger text-center">{error}</p>}
             <Form onSubmit={handleSubmit}>
               <Form.Group controlId="email" className="mb-3">
                 <Form.Label>Email</Form.Label>
@@ -145,7 +153,7 @@ const LogIn = ({ onLogin }) => {
           md={6}
           className="d-none d-md-block background-image"
           style={{
-            backgroundImage: `url(${backgroundImage})`, 
+            backgroundImage: `url(${backgroundImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
