@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Container, Button } from 'react-bootstrap';
 import axios from 'axios';
 import "./studentDetailSheet.css";
 
 const StudentDetailSheet = () => {
   const { studentId } = useParams(); // Get the student ID from the URL
+  console.log('studentId from useParams:', studentId);
+  const navigate = useNavigate();
   const [student, setStudent] = useState(null); // State to hold student data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,12 +19,14 @@ const StudentDetailSheet = () => {
         if (!token) {
           throw new Error('No token found, please log in.');
         }
+        console.log('Fetching student with ID:', studentId);
         const response = await axios.get(`http://localhost:8080/api/students/${studentId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         });
+        console.log('Student data:', response.data);
         setStudent(response.data);
         setLoading(false);
       } catch (err) {
@@ -34,6 +38,28 @@ const StudentDetailSheet = () => {
 
     fetchStudent();
   }, [studentId]);
+
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this student?')) {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('No token found, please log in.');
+        }
+        await axios.delete(`http://localhost:8080/api/students/${studentId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        navigate('/student-list'); // Redirect to student list after deletion
+      } catch (err) {
+        console.error('Error deleting student:', err);
+        setError('Failed to delete student.');
+      }
+    }
+  };
+
 
   if (loading) {
     return <div>Loading student details...</div>;

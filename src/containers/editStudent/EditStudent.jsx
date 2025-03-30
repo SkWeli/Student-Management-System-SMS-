@@ -1,26 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Form, Button, Dropdown } from 'react-bootstrap';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const EditStudent = () => {
   const { studentId } = useParams();
+  const navigate = useNavigate();
 
-  // Dummy student data (replace with API call or shared state in a real app)
-  const studentData = {
-    firstName: 'Senuda',
-    lastName: 'Weluwatta',
-    currentAddress: 'No. 38, Old Road, Kottawa, Pannipitiya',
-    birthday: '2002-06-12', // Adjusted format for date input
-    studentId: studentId || '57660',
-    degree: 'Software Engineering',
-    courses: [
-      'CS3202 - UX and UI Engineering',
-      'SE3203 - Software Construction Technologies and Tools',
-      'SE3202 - Software Modelling',
-    ],
-  };
-
-  // State for form fields
+  // State for form fields and loading/error
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -29,8 +16,9 @@ const EditStudent = () => {
     studentId: '',
     degree: '',
   });
-
   const [selectedCourses, setSelectedCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const courses = [
     'CS3202 - UX and UI Engineering',
@@ -41,18 +29,41 @@ const EditStudent = () => {
     'CS3202 - UX and UI Engineering',
   ];
 
-  // Pre-fill form with student data when component mounts
+  // Fetch student data on mount
   useEffect(() => {
-    setFormData({
-      firstName: studentData.firstName,
-      lastName: studentData.lastName,
-      currentAddress: studentData.currentAddress,
-      birthday: studentData.birthday,
-      studentId: studentData.studentId,
-      degree: studentData.degree,
-    });
-    setSelectedCourses(studentData.courses);
-  }, []);
+    const fetchStudent = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('No token found, please log in.');
+        }
+        const response = await axios.get(`http://localhost:8080/api/students/${studentId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        const student = response.data;
+        setFormData({
+          firstName: student.firstName || '',
+          lastName: student.lastName || '',
+          currentAddress: student.currentAddress || '',
+          birthday: student.birthday || '', // Assumes ISO format (e.g., "2002-06-12")
+          studentId: student.studentId || '',
+          degree: student.degree || '',
+        });
+        // Set courses if available (will be empty with @JsonIgnore)
+        setSelectedCourses(student.coursesEnrolled || []);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching student:', err);
+        setError('Failed to load student data.');
+        setLoading(false);
+      }
+    };
+
+    fetchStudent();
+  }, [studentId]);
 
   const handleCourseToggle = (course) => {
     if (selectedCourses.includes(course)) {
@@ -67,11 +78,38 @@ const EditStudent = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Log the updated data (replace with API call to save data)
-    console.log('Updated Student Data:', { ...formData, courses: selectedCourses });
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found, please log in.');
+      }
+      const updatedStudent = {
+        ...formData,
+        coursesEnrolled: selectedCourses, // Matches backend field name
+      };
+      await axios.put(`http://localhost:8080/api/students/${studentId}`, updatedStudent, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      // Navigate back to student detail page after successful update
+      navigate(`/student-detail/${studentId}`);
+    } catch (err) {
+      console.error('Error updating student:', err);
+      setError('Failed to save changes.');
+    }
   };
+
+  if (loading) {
+    return <div>Loading student data...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <Container
@@ -142,15 +180,15 @@ const EditStudent = () => {
             </Form.Group>
           </div>
           <div className="col-md-6 mb-3">
-            <Form.Group controlId="idNumber">
-              <Form.Label>ID Number</Form.Label>
+            <Form.Group controlId="studentId">
+              <Form.Label>Student ID</Form.Label>
               <Form.Control
                 type="text"
                 name="studentId"
                 value={formData.studentId}
                 onChange={handleChange}
-                placeholder="Enter ID number"
-                disabled // Optional: Disable editing of ID
+                placeholder="Enter student ID"
+                disabled // Prevent editing studentId
               />
             </Form.Group>
           </div>
@@ -191,7 +229,7 @@ const EditStudent = () => {
                     <div
                       key={course}
                       className="px-3 py-2 d-flex align-items-center"
-                      onClick={(e) => e.stopPropagation()} // Prevent dropdown from closing
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <Form.Check
                         type="checkbox"
@@ -209,11 +247,12 @@ const EditStudent = () => {
         </div>
 
         <div className="d-flex justify-content-between mt-5">
-        <Link to="/student-detail/${student.studentId}">
+          <Link to={`/student-detail/${studentId}`}>
+            <Button variant="secondary">Cancel</Button>
+          </Link>
           <Button variant="primary" type="submit">
             Save Changes
           </Button>
-          </Link>
         </div>
       </Form>
     </Container>

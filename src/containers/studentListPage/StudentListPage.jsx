@@ -54,6 +54,7 @@ const StudentListPage = () => {
   };
 
   const handleDoubleClick = (id) => {
+    console.log('Navigating with ID:', id);
     navigate(`/student-detail/${id}`);
   };
 
@@ -100,10 +101,12 @@ const StudentListPage = () => {
             </thead>
             <tbody>
               {filteredStudents.length > 0 ? (
-                filteredStudents.map((student) => (
+              filteredStudents.map((student) => {
+                console.log('Student in list:', student);
+                return (
                   <tr
                     key={student.studentNumber}
-                    onDoubleClick={() => handleDoubleClick(student.studentNumber)}
+                    onDoubleClick={() => handleDoubleClick(student.id)}
                     style={{ cursor: 'pointer' }}
                   >
                     <td>{formatStudentNumber(student.id)}</td>
@@ -113,7 +116,8 @@ const StudentListPage = () => {
                     <td>{student.idNumber}</td>
                     <td>{student.birthday}</td>
                   </tr>
-                ))
+                );
+              })
               ) : (
                 <tr>
                   <td colSpan="6" className="text-center">
