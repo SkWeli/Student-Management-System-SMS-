@@ -52,7 +52,7 @@ const StudentDetailSheet = () => {
             'Content-Type': 'application/json'
           }
         });
-        navigate('/student-list'); // Redirect to student list after deletion
+        navigate('/'); // Redirect to student list after deletion
       } catch (err) {
         console.error('Error deleting student:', err);
         setError('Failed to delete student.');
@@ -148,7 +148,9 @@ const StudentDetailSheet = () => {
 
         {/* Buttons */}
         <div className="d-flex justify-content-between">
-          <Button variant="danger">Remove Student</Button>
+        <Button variant="danger" onClick={handleDelete}>
+            Remove Student
+          </Button>
           <Link to={`/edit-student/${student.id}`}>
             <Button variant="primary">Edit Details</Button>
           </Link>

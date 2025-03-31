@@ -37,6 +37,7 @@ const EditStudent = () => {
         if (!token) {
           throw new Error('No token found, please log in.');
         }
+        
         const response = await axios.get(`http://localhost:8080/api/students/${studentId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -96,7 +97,7 @@ const EditStudent = () => {
         },
       });
       // Navigate back to student detail page after successful update
-      navigate(`/student-detail/${studentId}`);
+      navigate(`/`);
     } catch (err) {
       console.error('Error updating student:', err);
       setError('Failed to save changes.');

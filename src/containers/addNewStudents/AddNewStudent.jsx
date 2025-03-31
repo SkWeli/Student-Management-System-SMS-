@@ -12,6 +12,7 @@ const AddNewStudent = () => {
     birthday: '',
     idNumber: '',
     degree: '',
+    studentId: '',
   });
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [error, setError] = useState('');
@@ -52,12 +53,13 @@ const AddNewStudent = () => {
         firstName: formData.firstName,
         lastName: formData.lastName,
         currentAddress: formData.currentAddress,
-        birthday: formData.birthday,
+        birthday: formData.birthday, // "YYYY-MM-DD" matches VARCHAR(10)
         idNumber: formData.idNumber,
         degree: formData.degree,
+        studentId: formData.idNumber, // Use idNumber as studentId
         coursesEnrolled: selectedCourses,
       };
-  
+      console.log('POST Payload for /api/students:', JSON.stringify(studentData, null, 2));
       const response = await axios.post(
         'http://localhost:8080/api/students',
         studentData,
