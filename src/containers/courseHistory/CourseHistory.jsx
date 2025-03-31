@@ -11,44 +11,153 @@ const CourseHistory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const coursesByYear = {
+    'Year 01': {
+      'Semester 01': [
+        'CS1012 Fundamentals of Programming',
+        'CS1101 Programming Laboratory*',
+        'CS1022 Foundation of Computer Science',
+        'CS1032 Computer Systems Architecture',
+        'CS1043 Fundamentals of Databases',
+        'CS1052 Fundamentals of Visual Computing',
+        'CM1033 Probability and Statistics',
+        'CM1012 Engineering Mathematics',
+        'DL1132 English: Basic Study Skills for CS/SE/CE',
+        'LS1052 Leadership Training',
+        'MS1014 Military Studies I',
+      ],
+      'Semester 02': [
+        'CS1062 Developments in Mathematics and Sciences',
+        'CS1073 Object Oriented Programming I',
+        'CS1082 Web Development',
+        'CS1092 Computer Networks I',
+        'CM1052 Discrete Mathematics',
+        'COE1993 Group Project in Hardware',
+        'EE1102 Fundamentals of Electrical Engineering',
+        'ET1102 Basic Electronics',
+        'DL2142 English: Advance Study Skills for CS/SE/CE',
+        'MS1024 Military Studies II',
+      ],
+    },
+    'Year 02': {
+      'Semester 01': [
+        'CS2013 Data Structures and Algorithms I',
+        'CS2022 Operating Systems',
+        'CS2032 Object Oriented Programming II',
+        'CS2042 Computer Networks II',
+        'CS2052 Requirements Engineering',
+        'EE2122 Electronics Systems',
+        'CM2013 Calculus and Numerical Methods',
+        'MF2113 Principles of Management',
+        'MS3032 Strategic Defence Studies',
+        'DL3152 Writing and Speaking Skills',
+        'MS2044 Military Studies III',
+      ],
+      'Semester 02': [
+        'CS2062 Data Structures and Algorithms II',
+        'CS2072 Advanced Computer Architecture and Organization',
+        'CS2082 Artificial Intelligence',
+        'SE2013 Software Project Management',
+        'SE2022 Software Process Engineering',
+        'CM2032 Statistical Distributions and Inference',
+        'EE2222 Computer Interfacing and Microprocessors',
+        'CS2993 Group Project in Software Development',
+        'DL4162 Research Writing Skills',
+        'MS2024 Military Studies IV',
+      ],
+    },
+    'Year 03': {
+      'Semester 01': [
+        'CS3202 UX and UI Engineering',
+        'CS3023 Advanced Databases and Big Data Analytics',
+        'CS3032 Concurrent Programming',
+        'CS3042 Image Processing and Computer Vision',
+        'CS3052 Essentials of Computer Law',
+        'CS3062 Research Methodology',
+        'CS3072 Logic Programming',
+        'CS3082 Mobile Computing',
+        'CS3092 Computer and Network Security',
+        'CS3102 Bioinformatics',
+        'SE3042 Software Architecture and Design',
+      ],
+      'Semester 02': [
+        'CS3112 Computer Graphics and Visualization',
+        'CS3122 Automata Theory',
+        'CS3132 High Performance Computing',
+        'CS3142 Complex Systems and Agent Technology',
+        'CS3152 Information Security',
+        'CS3162 Social Aspects of Computing',
+        'CS3172 Digital Forensics',
+        'CS3182 Modeling and Simulation',
+        'CS3192 Nature Inspired Computing',
+        'CS3992 Independent Study',
+        'CM3013 Operational Research',
+        'COE3052 Microcontrollers and Embedded Systems',
+      ],
+    },
+    'Year 04': {
+      'Semester 01': [
+        'CS4012 Emerging Trends in Computing',
+        'CS4022 Theory of Programing Languages',
+        'CS4032 Natural Language Processing',
+        'CS4042 Machine Learning',
+        'SE4042 Software Quality Assurance',
+        'CS4062 Artificial Cognitive Systems',
+        'CS4072 Computability and Complexity',
+        'CS4082 Semantic Web and Ontology',
+        'CS4092 Distributed Systems',
+        'CS4102 Computer Music',
+        'COE4022 Advanced Operating Systems',
+        'COE4042 Robotics and Automation',
+        'SE4012 Formal Methods and Software Verification',
+        'CM4012 Advanced Topics in Statistics',
+        'CS4999 Individual Research Project',
+      ],
+      'Semester 02': [
+        'CS4999 Individual Research Project',
+        'CS4986 Industrial Training',
+      ],
+    },
+  };
+
   useEffect(() => {
     const fetchStudent = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('No token found, please log in.');
-        }
+        if (!token) throw new Error('No token found, please log in.');
+
         const response = await axios.get(`http://localhost:8080/api/students/${studentId}`, {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
         const fetchedStudent = response.data;
-        // Structure courses by year and semester (assuming flat list for now)
-        const coursesByYear = {
-          'Year 01': {
-            'Semester 01': fetchedStudent.coursesEnrolled || [],
-            'Semester 02': [], // Adjust based on actual data structure
-          },
-          'Year 02': {
-            'Semester 01': [],
-            'Semester 02': [],
-          },
-          'Year 03': {
-            'Semester 01': [],
-            'Semester 02': [],
-          },
-          'Year 04': {
-            'Semester 01': [],
-            'Semester 02': [],
-          },
+
+        // Categorize flat coursesEnrolled list into year/semester structure
+        const courses = {
+          'Year 01': { 'Semester 01': [], 'Semester 02': [] },
+          'Year 02': { 'Semester 01': [], 'Semester 02': [] },
+          'Year 03': { 'Semester 01': [], 'Semester 02': [] },
+          'Year 04': { 'Semester 01': [], 'Semester 02': [] },
         };
+
+        (fetchedStudent.coursesEnrolled || []).forEach((course) => {
+          for (const year in coursesByYear) {
+            for (const semester in coursesByYear[year]) {
+              if (coursesByYear[year][semester].includes(course)) {
+                courses[year][semester].push(course);
+                break;
+              }
+            }
+          }
+        });
+
         setStudent({
           firstName: fetchedStudent.firstName,
           lastName: fetchedStudent.lastName,
           degree: fetchedStudent.degree,
-          courses: coursesByYear,
+          courses,
         });
         setLoading(false);
       } catch (err) {
@@ -61,13 +170,8 @@ const CourseHistory = () => {
     fetchStudent();
   }, [studentId]);
 
-  if (loading) {
-    return <div>Loading course history...</div>;
-  }
-
-  if (error || !student) {
-    return <div>{error || 'Student not found.'}</div>;
-  }
+  if (loading) return <div>Loading course history...</div>;
+  if (error || !student) return <div>{error || 'Student not found.'}</div>;
 
   return (
     <div>
@@ -85,7 +189,6 @@ const CourseHistory = () => {
         Course History
       </h2>
       <Container className="mt-4">
-        {/* Year Tabs */}
         <Nav variant="pills" className="justify-content-center mb-3">
           {['Year 01', 'Year 02', 'Year 03', 'Year 04'].map((year) => (
             <Nav.Item key={year}>
@@ -106,7 +209,6 @@ const CourseHistory = () => {
           ))}
         </Nav>
 
-        {/* Semester Tabs and Courses */}
         <Container
           className="p-4 px-5"
           style={{
@@ -134,7 +236,6 @@ const CourseHistory = () => {
             ))}
           </Nav>
 
-          {/* Student Info */}
           <div className="mb-4">
             <div className="row">
               <div className="col-md-6">
