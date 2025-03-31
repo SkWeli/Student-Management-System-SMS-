@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
 import { BsBoxArrowRight } from 'react-icons/bs';
-import { useNavigate } from 'react-router-dom'; // Import for navigation
+import { useNavigate } from 'react-router-dom'; 
 import logo from '../../assets/KDU_logo.png';
 import './header.css'; 
 
