@@ -209,7 +209,7 @@ const EditStudent = () => {
         }
       );
       console.log('Student updated:', response.data);
-      navigate(`/student-detail/${studentId}`);
+      navigate(`//${studentId}`);
     } catch (err) {
       console.error('Error updating student:', err);
       const errorMessage = err.response?.data?.error || 'Failed to update student.';

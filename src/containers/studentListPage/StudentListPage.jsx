@@ -21,9 +21,9 @@ const StudentListPage = () => {
         }
         const response = await axios.get('http://localhost:8080/api/students', {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         });
         setStudents(response.data);
         setFilteredStudents(response.data);
@@ -33,7 +33,7 @@ const StudentListPage = () => {
         setError('Failed to fetch students. Please log in again.');
         setLoading(false);
         if (err.response && err.response.status === 401) {
-          navigate('/login'); // Redirect to login on 401
+          navigate('/login');
         }
       }
     };
@@ -63,7 +63,10 @@ const StudentListPage = () => {
   };
 
   return (
-    <div className="mt-4">
+    <div
+      className="mt-4"
+      style={{ paddingLeft: '40px', paddingRight: '40px' }} // Add padding here
+    >
       <div className="d-flex justify-content-between mb-3">
         <div className="input-group" style={{ maxWidth: '700px' }}>
           <span className="input-group-text">
@@ -101,23 +104,23 @@ const StudentListPage = () => {
             </thead>
             <tbody>
               {filteredStudents.length > 0 ? (
-              filteredStudents.map((student) => {
-                console.log('Student in list:', student);
-                return (
-                  <tr
-                    key={student.studentNumber}
-                    onDoubleClick={() => handleDoubleClick(student.id)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <td>{formatStudentNumber(student.id)}</td>
-                    <td>{student.firstName}</td>
-                    <td>{student.lastName}</td>
-                    <td>{student.degree}</td>
-                    <td>{student.idNumber}</td>
-                    <td>{student.birthday}</td>
-                  </tr>
-                );
-              })
+                filteredStudents.map((student) => {
+                  console.log('Student in list:', student);
+                  return (
+                    <tr
+                      key={student.studentNumber}
+                      onDoubleClick={() => handleDoubleClick(student.id)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <td>{formatStudentNumber(student.id)}</td>
+                      <td>{student.firstName}</td>
+                      <td>{student.lastName}</td>
+                      <td>{student.degree}</td>
+                      <td>{student.idNumber}</td>
+                      <td>{student.birthday}</td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
                   <td colSpan="6" className="text-center">

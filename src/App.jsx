@@ -3,55 +3,59 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { Header, Footer } from './components';
 import { StudentListPage, AddNewStudent, StudentDetailSheet, CourseHistory, EditStudent, LogIn } from './containers';
 
-// A wrapper component to handle conditional rendering of the Header
+// A wrapper component to handle conditional rendering
 const AppContent = () => {
   const location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // Initialize isLoggedIn based on localStorage to prevent reset on refresh
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem('isLoggedIn') === 'true';
+  });
 
-  // Check if the user is logged in (using localStorage as a placeholder)
+  // Sync login status with localStorage changes (e.g., across tabs)
   useEffect(() => {
     const checkLoginStatus = () => {
       const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
       setIsLoggedIn(loggedIn);
     };
-    
-    checkLoginStatus();
-  
-    // Listen for storage changes
+
     window.addEventListener('storage', checkLoginStatus);
-    
     return () => {
       window.removeEventListener('storage', checkLoginStatus);
     };
   }, []);
-  // Function to handle login
+
+  // Handle login
   const handleLogin = () => {
     setIsLoggedIn(true);
     localStorage.setItem('isLoggedIn', 'true');
   };
 
-  // Function to handle logout
+  // Handle logout
   const handleLogout = () => {
     setIsLoggedIn(false);
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('token'); // Clear token if used
   };
 
-  // ProtectedRoute component to guard routes
+  // ProtectedRoute component
   const ProtectedRoute = ({ children }) => {
-    return isLoggedIn ? children : <Navigate to="/login" />;
+    // Avoid redirecting on initial render if token exists
+    const hasToken = localStorage.getItem('token');
+    if (!isLoggedIn && !hasToken) {
+      return <Navigate to="/login" />;
+    }
+    return children;
   };
 
-  // Hide the Header on the login page
+  // Hide Header on login page
   const showHeader = location.pathname !== '/login';
 
   return (
     <div className="App">
       {showHeader && <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />}
-      <div className="container">
+      <div className="content">
         <Routes>
-          {/* Default route: Login Page */}
           <Route path="/login" element={<LogIn onLogin={handleLogin} />} />
-          {/* Route for Student List Page (protected) */}
           <Route
             path="/"
             element={
@@ -60,7 +64,6 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
-          {/* Route for Add New Student (protected) */}
           <Route
             path="/add-new-student"
             element={
@@ -69,7 +72,6 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
-          {/* Route for Student Detail Sheet (protected) */}
           <Route
             path="/student-detail/:studentId"
             element={
@@ -78,7 +80,6 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
-          {/* Route for Course History (protected) */}
           <Route
             path="/course-history/:studentId"
             element={
@@ -87,7 +88,6 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
-          {/* Route for Edit Student (protected) */}
           <Route
             path="/edit-student/:studentId"
             element={
@@ -96,7 +96,6 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
-          {/* Redirect any unknown routes to login */}
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </div>
