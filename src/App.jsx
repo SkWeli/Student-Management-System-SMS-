@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Header, Footer } from './components';
 import { StudentListPage, AddNewStudent, StudentDetailSheet, CourseHistory, EditStudent, LogIn } from './containers';
-
+import './App.css';
 // A wrapper component to handle conditional rendering
 const AppContent = () => {
   const location = useLocation();

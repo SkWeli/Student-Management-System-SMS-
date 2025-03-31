@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../../assets/KDU_logo.png';
 import backgroundImage from '../../assets/backgroundImage.jpeg';
+import './logIn.css';
 
 const LogIn = ({ onLogin }) => {
   const navigate = useNavigate();
 
-  // State for form fields
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -27,13 +27,12 @@ const LogIn = ({ onLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting login request with:", formData); // Log the form data
+    console.log("Submitting login request with:", formData);
     try {
-      // Send login request to backend (JWT-based endpoint)
       const response = await axios.post(
         'http://localhost:8080/api/auth/login',
         {
-          username: formData.email, // Assuming email is used as username
+          username: formData.email,
           password: formData.password,
         },
         {
@@ -42,34 +41,28 @@ const LogIn = ({ onLogin }) => {
           },
         }
       );
-      console.log("Response from backend:", response); // Log the full response
-      console.log("Response data:", response.data); // Log the response data
+      console.log("Response from backend:", response);
+      console.log("Response data:", response.data);
 
-      // Check if the response contains a token
       if (response.data && response.data.token) {
-        // Store the token in localStorage
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('isLoggedIn', 'true');
-        console.log('JWT Token stored:', response.data.token); // For debugging
-        onLogin(); // Notify App component of successful login
-        // Navigate to the homepage
+        console.log('JWT Token stored:', response.data.token);
+        onLogin();
         navigate('/');
       } else {
         setError('Login successful, but no token received. Please contact support.');
         console.log('No token in response:', response.data);
       }
     } catch (err) {
-      console.error("Login request failed:", err); // Log the full error
+      console.error("Login request failed:", err);
       if (err.response) {
-        // Backend responded with an error status (e.g., 401, 400)
         setError(err.response.data.error || 'Invalid email or password');
         console.log("Error response from backend:", err.response);
       } else if (err.request) {
-        // No response from backend (e.g., network error)
         setError('Network error. Please check if the backend is running.');
         console.log("No response received:", err.request);
       } else {
-        // Other errors (e.g., request setup error)
         setError('An unexpected error occurred. Please try again.');
         console.log("Unexpected error:", err.message);
       }
@@ -80,8 +73,11 @@ const LogIn = ({ onLogin }) => {
     <div className="login-page">
       <Row className="m-0">
         {/* Left Side: Login Form */}
-        <Col md={6} className="d-flex align-items-center justify-content-center">
-          <Container className="login-container">
+        <Col
+          md={6}
+          className="d-flex align-items-center justify-content-center"
+        >
+          <Container className="login-container" style={{ paddingTop: '40px' }}>
             {/* Logo */}
             <div className="text-center mb-4">
               <img

@@ -1,0 +1,33 @@
+.login-page {
+    height: 100vh; /* Ensure the login page takes full viewport height */
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0 !important; /* Remove any bottom padding */
+    margin-bottom: 0 !important; /* Remove any bottom margin */
+  }
+  
+  /* Ensure the row takes full height and has no bottom padding/margin */
+  .login-page .row {
+    flex: 1; /* Stretch to fill the parent */
+    margin: 0 !important; /* Override Bootstrap's negative margins */
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  
+  /* Ensure columns stretch to bottom and have no bottom padding/margin */
+  .login-page .col-md-6 {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    display: flex; /* Ensure content stretches */
+    flex-direction: column;
+  }
+  
+  /* Ensure the background image column stretches to the bottom */
+  .login-page .background-image {
+    flex: 1; /* Stretch to fill the column */
+  }
+  
+  /* Limit the width of the login form */
+  .login-container {
+    max-width: 400px;
+  }

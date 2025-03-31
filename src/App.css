@@ -1,5 +1,7 @@
 .App {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .App-logo {
@@ -11,6 +13,15 @@
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+}
+
+.content {
+  flex: 1 0 auto; /* Allow content to grow and push footer down */
+  padding-bottom: 20px; /* Matches marginTop in Footer */
+}
+
+footer {
+  flex-shrink: 0; /* Prevent footer from shrinking */
 }
 
 .App-header {
