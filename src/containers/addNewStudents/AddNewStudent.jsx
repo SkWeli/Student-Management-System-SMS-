@@ -13,6 +13,8 @@ const AddNewStudent = () => {
     idNumber: '',
     degree: '',
     studentId: '',
+    year: '',
+    semester: '',
   });
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [error, setError] = useState('');
@@ -126,6 +128,7 @@ const AddNewStudent = () => {
     },
   };
 
+  // Flatten all courses into a single array
   const allCourses = Object.values(coursesByYear).flatMap(semesters =>
     Object.values(semesters).flat()
   );
@@ -157,6 +160,8 @@ const AddNewStudent = () => {
         idNumber: formData.idNumber,
         degree: formData.degree,
         studentId: formData.idNumber,
+        year: parseInt(formData.year), // Convert to integer
+        semester: parseInt(formData.semester), // Convert to integer
         coursesEnrolled: selectedCourses,
       };
 
@@ -288,7 +293,42 @@ const AddNewStudent = () => {
               </Form.Select>
             </Form.Group>
           </div>
-          <div className="col-md-6 mb-3">
+          <div className="col-md-3 mb-3">
+            <Form.Group controlId="year">
+              <Form.Label>Year</Form.Label>
+              <Form.Select
+                name="year"
+                value={formData.year}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Year</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </Form.Select>
+            </Form.Group>
+          </div>
+          <div className="col-md-3 mb-3">
+            <Form.Group controlId="semester">
+              <Form.Label>Semester</Form.Label>
+              <Form.Select
+                name="semester"
+                value={formData.semester}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Semester</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </Form.Select>
+            </Form.Group>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-12 mb-3">
             <Form.Group controlId="coursesEnrolled">
               <Form.Label>Courses Enrolled</Form.Label>
               <Dropdown>

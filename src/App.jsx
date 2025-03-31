@@ -57,6 +57,14 @@ const AppContent = () => {
         <Routes>
           <Route path="/login" element={<LogIn onLogin={handleLogin} />} />
           <Route
+            path="/reset-password"
+            element={
+              <ProtectedRoute>
+                <StudentListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/"
             element={
               <ProtectedRoute>

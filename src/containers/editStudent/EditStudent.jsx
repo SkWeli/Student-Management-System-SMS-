@@ -15,6 +15,8 @@ const EditStudent = () => {
     idNumber: '',
     degree: '',
     studentId: '',
+    year: '', // Added year field
+    semester: '', // Added semester field
   });
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -154,6 +156,8 @@ const EditStudent = () => {
           idNumber: student.idNumber || '',
           degree: student.degree || '',
           studentId: student.studentId || '',
+          year: student.year || '', // Load year from student data
+          semester: student.semester || '', // Load semester from student data
         });
         setSelectedCourses(student.coursesEnrolled || []);
         setLoading(false);
@@ -194,6 +198,8 @@ const EditStudent = () => {
         idNumber: formData.idNumber,
         degree: formData.degree,
         studentId: formData.studentId,
+        year: parseInt(formData.year), // Convert to integer
+        semester: parseInt(formData.semester), // Convert to integer
         coursesEnrolled: selectedCourses,
       };
 
@@ -209,7 +215,7 @@ const EditStudent = () => {
         }
       );
       console.log('Student updated:', response.data);
-      navigate(`//${studentId}`);
+      navigate(`/student-detail/${studentId}`); // Fixed navigation path
     } catch (err) {
       console.error('Error updating student:', err);
       const errorMessage = err.response?.data?.error || 'Failed to update student.';
@@ -329,7 +335,42 @@ const EditStudent = () => {
               </Form.Select>
             </Form.Group>
           </div>
-          <div className="col-md-6 mb-3">
+          <div className="col-md-3 mb-3">
+            <Form.Group controlId="year">
+              <Form.Label>Year</Form.Label>
+              <Form.Select
+                name="year"
+                value={formData.year}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Year</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </Form.Select>
+            </Form.Group>
+          </div>
+          <div className="col-md-3 mb-3">
+            <Form.Group controlId="semester">
+              <Form.Label>Semester</Form.Label>
+              <Form.Select
+                name="semester"
+                value={formData.semester}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Semester</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </Form.Select>
+            </Form.Group>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-12 mb-3">
             <Form.Group controlId="coursesEnrolled">
               <Form.Label>Courses Enrolled</Form.Label>
               <Dropdown>

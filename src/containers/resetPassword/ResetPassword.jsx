@@ -1,39 +1,39 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../../assets/KDU_logo.png';
 import backgroundImage from '../../assets/backgroundImage.jpeg';
-import './logIn.css';
+import './logIn.css'; // Reuse the same CSS file as LogIn.jsx
 
-const LogIn = ({ onLogin }) => {
+const ResetPassword = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
-    rememberMe: false,
   });
 
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting login request with:", formData);
+    setError(''); // Clear previous errors
+    setSuccess(''); // Clear previous success messages
+    console.log("Submitting reset password request with:", formData);
     try {
       const response = await axios.post(
-        'http://localhost:8080/api/auth/login',
+        'http://localhost:8080/api/auth/reset-password',
         {
-          username: formData.email,
-          password: formData.password,
+          email: formData.email,
         },
         {
           headers: {
@@ -44,20 +44,13 @@ const LogIn = ({ onLogin }) => {
       console.log("Response from backend:", response);
       console.log("Response data:", response.data);
 
-      if (response.data && response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('isLoggedIn', 'true');
-        console.log('JWT Token stored:', response.data.token);
-        onLogin();
-        navigate('/');
-      } else {
-        setError('Login successful, but no token received. Please contact support.');
-        console.log('No token in response:', response.data);
-      }
+      // Assuming the backend returns a success message
+      setSuccess('A password reset link has been sent to your email.');
+      setFormData({ email: '' }); // Clear the form
     } catch (err) {
-      console.error("Login request failed:", err);
+      console.error("Reset password request failed:", err);
       if (err.response) {
-        setError(err.response.data.error || 'Invalid email or password');
+        setError(err.response.data.error || 'Failed to send reset link. Please try again.');
         console.log("Error response from backend:", err.response);
       } else if (err.request) {
         setError('Network error. Please check if the backend is running.');
@@ -72,7 +65,7 @@ const LogIn = ({ onLogin }) => {
   return (
     <div className="login-page">
       <Row className="m-0">
-        {/* Left Side: Login Form */}
+        {/* Left Side: Reset Password Form */}
         <Col
           md={6}
           className="d-flex align-items-center justify-content-center"
@@ -94,10 +87,13 @@ const LogIn = ({ onLogin }) => {
             </h2>
             <h4 className="text-center mb-4">FACULTY OF COMPUTING</h4>
 
-            {/* Login Form */}
-            <h5 className="text-center mb-4">Log In</h5>
-            <p className="text-center mb-4">Sign in to stay connected.</p>
+            {/* Reset Password Form */}
+            <h5 className="text-center mb-4">Reset Password</h5>
+            <p className="text-center mb-4">
+              Enter your email address & we’ll send you an email with instructions to reset your password
+            </p>
             {error && <p className="text-danger text-center">{error}</p>}
+            {success && <p className="text-success text-center">{success}</p>}
             <Form onSubmit={handleSubmit}>
               <Form.Group controlId="email" className="mb-3">
                 <Form.Label>Email</Form.Label>
@@ -111,34 +107,8 @@ const LogIn = ({ onLogin }) => {
                 />
               </Form.Group>
 
-              <Form.Group controlId="password" className="mb-3">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Enter your password"
-                  required
-                />
-              </Form.Group>
-
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <Form.Check
-                  type="checkbox"
-                  id="rememberMe"
-                  label="Remember me?"
-                  name="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleChange}
-                />
-                <Link to="/reset-password" className="forgot-password">
-                  Forgot Password
-                </Link>
-              </div>
-
               <Button variant="primary" type="submit" className="w-100">
-                Sign in
+                Reset
               </Button>
             </Form>
           </Container>
@@ -159,4 +129,4 @@ const LogIn = ({ onLogin }) => {
   );
 };
 
-export default LogIn;
+export default ResetPassword;
