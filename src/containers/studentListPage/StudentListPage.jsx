@@ -4,7 +4,29 @@ import { IoSearchOutline } from 'react-icons/io5';
 import axios from 'axios';
 import './studentListPage.css';
 
+/**
+ * StudentListPage Component
+ * 
+ * Displays a paginated list of students with search functionality.
+ * 
+ * Features:
+ * - Fetches student data from API
+ * - Real-time search filtering
+ * - Double-click navigation to student details
+ * - Add new student button
+ * - Responsive table layout
+ * - Error handling and loading states
+ * 
+ * State Management:
+ * - students: Original student data from API
+ * - filteredStudents: Filtered list based on search
+ * - searchQuery: Current search term
+ * - loading: Data loading state
+ * - error: Error message storage
+ */
 const StudentListPage = () => {
+
+  // State declarations
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
@@ -12,6 +34,9 @@ const StudentListPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  /**
+   * Fetches student data 
+   */
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -32,6 +57,8 @@ const StudentListPage = () => {
         console.error('Error fetching students:', err);
         setError('Failed to fetch students. Please log in again.');
         setLoading(false);
+
+        // Redirect to login if unauthorized
         if (err.response && err.response.status === 401) {
           navigate('/login');
         }
@@ -41,6 +68,14 @@ const StudentListPage = () => {
     fetchStudents();
   }, [navigate]);
 
+  /**
+   * Handles search input changes
+   * - Filters students by name or ID
+   * - Case-insensitive matching
+   * - Updates filteredStudents state
+   * 
+   * @param {React.ChangeEvent} e - The input change event
+   */
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
@@ -53,11 +88,20 @@ const StudentListPage = () => {
     setFilteredStudents(filtered);
   };
 
+  /**
+   * Navigates to student detail page on row double-click
+   * @param {string} id - Student ID to view details for
+   */
   const handleDoubleClick = (id) => {
     console.log('Navigating with ID:', id);
     navigate(`/student-detail/${id}`);
   };
 
+  /**
+   * Formats student numbers with leading zeros
+   * @param {number|string} id - Student ID to format
+   * @returns {string} Padded student number 
+   */
   const formatStudentNumber = (id) => {
     return String(id).padStart(8, '0');
   };
@@ -90,6 +134,7 @@ const StudentListPage = () => {
       ) : error ? (
         <p className="text-danger">{error}</p>
       ) : (
+        /* Student Data Table */
         <div className="table-responsive">
           <table className="table table-bordered table-hover">
             <thead className="table-primary text-white">

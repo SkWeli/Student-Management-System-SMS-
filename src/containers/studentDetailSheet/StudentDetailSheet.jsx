@@ -4,15 +4,36 @@ import { Container, Button } from 'react-bootstrap';
 import axios from 'axios';
 import "./studentDetailSheet.css";
 
+/**
+ * StudentDetailSheet Component
+ * 
+ * Displays detailed information about a specific student including:
+ * - Personal information
+ * - Academic details
+ * - Course enrollment
+ * 
+ * Features:
+ * - Fetches student data from API
+ * - Displays courses filtered by year/semester
+ * - Delete student functionality
+ * - Edit student navigation
+ * - Course history link
+ * 
+ */
 const StudentDetailSheet = () => {
+
   const { studentId } = useParams(); // Get the student ID from the URL
   console.log('studentId from useParams:', studentId);
   const navigate = useNavigate();
+
   const [student, setStudent] = useState(null); // State to hold student data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Define the courses by year and semester (same as in AddNewStudent.jsx)
+  /**
+   * Static course data organized by year and semester
+   * Contains all possible courses for the program
+   */
   const coursesByYear = {
     'Year 01': {
       'Semester 01': [
@@ -122,7 +143,9 @@ const StudentDetailSheet = () => {
     },
   };
 
-  // Map year and semester values to keys in coursesByYear
+  /**
+   * Maps numerical year values to display strings
+   */
   const yearMap = {
     '1': 'Year 01',
     '2': 'Year 02',
@@ -130,11 +153,17 @@ const StudentDetailSheet = () => {
     '4': 'Year 04',
   };
 
+  /**
+   * Maps numerical semester values to display strings
+   */
   const semesterMap = {
     '1': 'Semester 01',
     '2': 'Semester 02',
   };
 
+  /**
+   * Fetches student data when component mounts or studentId changes
+   */
   useEffect(() => {
     const fetchStudent = async () => {
       try {
@@ -162,6 +191,12 @@ const StudentDetailSheet = () => {
     fetchStudent();
   }, [studentId]);
 
+  /**
+   * Handles student deletion
+   * - Confirms with user before deletion
+   * - Makes API request to delete student
+   * - Redirects to student list on success
+   */
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this student?')) {
       try {
@@ -216,6 +251,8 @@ const StudentDetailSheet = () => {
       >
         Student Detail Sheet
       </h2>
+
+      {/* Main Content Container */}
       <Container
         className="mt-4 p-5 custom-container"
         style={{
