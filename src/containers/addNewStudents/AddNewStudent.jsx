@@ -3,8 +3,24 @@ import { Container, Form, Button, Dropdown } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * AddNewStudent Component
+ * 
+ * Provides a form to register new students with:
+ * - Personal information
+ * - Academic details
+ * - Course enrollment
+ * 
+ * Features:
+ * - Form validation
+ * - Course selection by year/semester
+ * - JWT authenticated API submission
+ * - Error handling
+ */
 const AddNewStudent = () => {
   const navigate = useNavigate();
+
+  // Form state management
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -16,9 +32,13 @@ const AddNewStudent = () => {
     year: '',
     semester: '',
   });
-  const [selectedCourses, setSelectedCourses] = useState([]);
-  const [error, setError] = useState('');
+  const [selectedCourses, setSelectedCourses] = useState([]); // Track selected courses
+  const [error, setError] = useState(''); // Store form submission errors
 
+  /**
+   * Static course data organized by year and semester
+   * Contains all possible courses for the program
+   */
   const coursesByYear = {
     'Year 01': {
       'Semester 01': [
@@ -128,16 +148,24 @@ const AddNewStudent = () => {
     },
   };
 
-  // Flatten all courses into a single array
+  // Flatten all courses into a single array dropdown display
   const allCourses = Object.values(coursesByYear).flatMap(semesters =>
     Object.values(semesters).flat()
   );
 
+  /**
+   * Handle form input changes
+   * @param {Object} e - The change event
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  /**
+   * Toggle course selection
+   * @param {string} course - The course to toggle
+   */
   const handleCourseToggle = (course) => {
     setSelectedCourses((prev) =>
       prev.includes(course)
@@ -146,12 +174,17 @@ const AddNewStudent = () => {
     );
   };
 
+  /**
+   * Handle form submission
+   * @param {Object} e - The submit event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No token found in localStorage');
 
+      // Prepare student data payload
       const studentData = {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -159,12 +192,13 @@ const AddNewStudent = () => {
         birthday: formData.birthday,
         idNumber: formData.idNumber,
         degree: formData.degree,
-        studentId: formData.idNumber,
+        studentId: formData.idNumber, // Using idNumber as studentId
         year: parseInt(formData.year), // Convert to integer
         semester: parseInt(formData.semester), // Convert to integer
         coursesEnrolled: selectedCourses,
       };
 
+      // Submit to API
       console.log('POST Payload for /api/students:', JSON.stringify(studentData, null, 2));
       const response = await axios.post(
         'http://localhost:8080/api/students',
@@ -177,10 +211,14 @@ const AddNewStudent = () => {
         }
       );
       console.log('Student added:', response.data);
+
+      // On success, navigate to studentListPage
       navigate('/');
     } catch (err) {
       console.error('Error adding student:', err);
       const errorMessage = err.response?.data?.error || 'Failed to add student.';
+
+      // Special handling for duplicate ID error
       if (errorMessage.includes('duplicate key value violates unique constraint')) {
         alert(`The student ID "${formData.idNumber}" is already registered. Please check your ID number and try again.`);
       } else {
@@ -206,6 +244,8 @@ const AddNewStudent = () => {
       </h2>
       <Form onSubmit={handleSubmit}>
         {error && <p className="text-danger text-center">{error}</p>}
+        
+        {/* Personal Information Section */}
         <div className="row">
           <div className="col-md-6 mb-3">
             <Form.Group controlId="firstName">
@@ -273,6 +313,7 @@ const AddNewStudent = () => {
           </div>
         </div>
 
+        {/* Academic Information Section */}
         <div className="row">
           <div className="col-md-6 mb-3">
             <Form.Group controlId="degree">
@@ -361,6 +402,7 @@ const AddNewStudent = () => {
           </div>
         </div>
 
+        {/* Form Actions */}
         <div className="d-flex justify-content-between mt-5">
           <Button variant="outline-secondary" className="d-flex align-items-center">
             <span

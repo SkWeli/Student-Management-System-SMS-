@@ -6,9 +6,30 @@ import logo from '../../assets/KDU_logo.png';
 import backgroundImage from '../../assets/backgroundImage.jpeg';
 import './logIn.css';
 
+/**
+ * LogIn Component
+ * 
+ * Provides a login interface for users with:
+ * - Email and password authentication
+ * - Remember me functionality
+ * - Forgot password link
+ * - Error handling
+ * 
+ * Props:
+ * @param {function} onLogin - Callback function to execute after successful login
+ * 
+ * Features:
+ * - JWT token storage
+ * - Responsive layout with background image
+ * - Form validation
+ * - Error feedback
+ */
 const LogIn = ({ onLogin }) => {
   const navigate = useNavigate();
 
+   /**
+   * Form state management
+   */
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -17,6 +38,10 @@ const LogIn = ({ onLogin }) => {
 
   const [error, setError] = useState('');
 
+  /**
+   * Handles form input changes
+   * @param {React.ChangeEvent} e - The change event
+   */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -25,6 +50,15 @@ const LogIn = ({ onLogin }) => {
     });
   };
 
+  /**
+   * Handles form submission
+   * - Validates credentials
+   * - Authenticates with backend
+   * - Stores JWT token
+   * - Handles success/error cases
+   * 
+   * @param {React.FormEvent} e - The form submission event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitting login request with:", formData);
@@ -44,10 +78,13 @@ const LogIn = ({ onLogin }) => {
       console.log("Response from backend:", response);
       console.log("Response data:", response.data);
 
+      // Handle successful authentication
       if (response.data && response.data.token) {
+        // Store token and login status
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('isLoggedIn', 'true');
         console.log('JWT Token stored:', response.data.token);
+        // Execute parent component's login callback
         onLogin();
         navigate('/');
       } else {
@@ -56,6 +93,8 @@ const LogIn = ({ onLogin }) => {
       }
     } catch (err) {
       console.error("Login request failed:", err);
+
+      // Handle different errors
       if (err.response) {
         setError(err.response.data.error || 'Invalid email or password');
         console.log("Error response from backend:", err.response);
@@ -98,6 +137,8 @@ const LogIn = ({ onLogin }) => {
             <h5 className="text-center mb-4">Log In</h5>
             <p className="text-center mb-4">Sign in to stay connected.</p>
             {error && <p className="text-danger text-center">{error}</p>}
+            
+            {/* Main Login Form */}
             <Form onSubmit={handleSubmit}>
               <Form.Group controlId="email" className="mb-3">
                 <Form.Label>Email</Form.Label>

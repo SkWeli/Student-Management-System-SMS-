@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../../assets/KDU_logo.png';
 import backgroundImage from '../../assets/backgroundImage.jpeg';
-import './logIn.css'; // Reuse the same CSS file as LogIn.jsx
+import './resetPassword.css'; // Reuse the same CSS file as LogIn.jsx
 
 const ResetPassword = () => {
   const navigate = useNavigate();

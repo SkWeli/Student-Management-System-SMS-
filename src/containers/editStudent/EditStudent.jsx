@@ -3,10 +3,27 @@ import { Container, Form, Button, Dropdown } from 'react-bootstrap';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+/**
+ * EditStudent Component
+ * 
+ * Allows editing of existing student records with:
+ * - Personal information updates
+ * - Academic details modification
+ * - Course enrollment management
+ * 
+ * Features:
+ * - Pre-fills form with existing student data
+ * - Form validation
+ * - Course selection by year/semester
+ * - JWT authenticated API submission
+ * - Error handling and loading states
+ */
 const EditStudent = () => {
+  // Get student ID from URL
   const { studentId } = useParams();
   const navigate = useNavigate();
 
+  // Form state management
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -15,13 +32,19 @@ const EditStudent = () => {
     idNumber: '',
     degree: '',
     studentId: '',
-    year: '', // Added year field
-    semester: '', // Added semester field
+    year: '', 
+    semester: '', 
   });
+
+   // Track selected courses
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  /**
+   * Static course data organized by year and semester
+   * Contains all possible courses for the program
+   */
   const coursesByYear = {
     'Year 01': {
       'Semester 01': [
@@ -131,22 +154,31 @@ const EditStudent = () => {
     },
   };
 
+  /**
+   * Flattened array of all courses for dropdown display
+   */
   const allCourses = Object.values(coursesByYear).flatMap(semesters =>
     Object.values(semesters).flat()
   );
 
+  /**
+   * Fetch student data when component mounts or studentId changes
+   */
   useEffect(() => {
     const fetchStudent = async () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No token found, please log in.');
 
+        // API call to get student data
         const response = await axios.get(`http://localhost:8080/api/students/${studentId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
+
+        // Update state with fetched student data
         const student = response.data;
         setFormData({
           firstName: student.firstName || '',
@@ -156,8 +188,8 @@ const EditStudent = () => {
           idNumber: student.idNumber || '',
           degree: student.degree || '',
           studentId: student.studentId || '',
-          year: student.year || '', // Load year from student data
-          semester: student.semester || '', // Load semester from student data
+          year: student.year || '', 
+          semester: student.semester || '', 
         });
         setSelectedCourses(student.coursesEnrolled || []);
         setLoading(false);
@@ -171,11 +203,19 @@ const EditStudent = () => {
     fetchStudent();
   }, [studentId]);
 
+  /**
+   * Handle form input changes
+   * @param {Object} e - The change event
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  /**
+   * Toggle course selection
+   * @param {string} course - The course to toggle
+   */
   const handleCourseToggle = (course) => {
     setSelectedCourses((prev) =>
       prev.includes(course)
@@ -184,12 +224,17 @@ const EditStudent = () => {
     );
   };
 
+  /**
+   * Handle form submission
+   * @param {Object} e - The submit event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No token found, please log in.');
 
+      // Prepare updated student data payload
       const updatedStudent = {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -203,6 +248,7 @@ const EditStudent = () => {
         coursesEnrolled: selectedCourses,
       };
 
+      // API call to update student
       console.log('PUT Payload for /api/students:', JSON.stringify(updatedStudent, null, 2));
       const response = await axios.put(
         `http://localhost:8080/api/students/${studentId}`,
@@ -215,10 +261,14 @@ const EditStudent = () => {
         }
       );
       console.log('Student updated:', response.data);
-      navigate(`/student-detail/${studentId}`); // Fixed navigation path
+      
+      // Navigate to studentDetailsPage
+      navigate(`/student-detail/${studentId}`); 
     } catch (err) {
       console.error('Error updating student:', err);
       const errorMessage = err.response?.data?.error || 'Failed to update student.';
+      
+      // Special handling for duplicate ID error
       if (errorMessage.includes('duplicate key value violates unique constraint')) {
         alert(`The student ID "${formData.studentId}" is already registered. Please check your ID number and try again.`);
       } else {
@@ -247,6 +297,8 @@ const EditStudent = () => {
       </h2>
       <Form onSubmit={handleSubmit}>
         {error && <p className="text-danger text-center">{error}</p>}
+        
+        {/* Personal Information Section */}
         <div className="row">
           <div className="col-md-6 mb-3">
             <Form.Group controlId="firstName">
@@ -403,6 +455,7 @@ const EditStudent = () => {
           </div>
         </div>
 
+        {/* Form Actions */}
         <div className="d-flex justify-content-between mt-5">
           <Link to={`/student-detail/${studentId}`}>
             <Button variant="outline-secondary">Cancel</Button>

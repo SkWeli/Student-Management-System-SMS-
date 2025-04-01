@@ -3,14 +3,32 @@ import { Container, Nav } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
+/**
+ * CourseHistory Component
+ * 
+ * Displays a student's enrolled courses organized by academic year and semester
+ * 
+ * Features:
+ * - Fetches student data from API
+ * - Organizes courses by year/semester
+ * - Interactive year/semester selection
+ * - Responsive layout with Bootstrap
+ */
 const CourseHistory = () => {
+  // Get studentId from URL params
   const { studentId } = useParams();
-  const [activeYear, setActiveYear] = useState('Year 01');
-  const [activeSemester, setActiveSemester] = useState('Semester 01');
-  const [student, setStudent] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
+  // State management
+  const [activeYear, setActiveYear] = useState('Year 01');// Currently selected year
+  const [activeSemester, setActiveSemester] = useState('Semester 01'); // Currently selected semester
+  const [student, setStudent] = useState(null); // Student data
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+
+  /**
+   * Static course data organized by year and semester
+   * Contains all possible courses for the program
+   */
   const coursesByYear = {
     'Year 01': {
       'Semester 01': [
@@ -120,12 +138,17 @@ const CourseHistory = () => {
     },
   };
 
+  /**
+   * Fetches student data and organizes courses by year/semester
+   */
   useEffect(() => {
     const fetchStudent = async () => {
       try {
+         // Get JWT token from local storage
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No token found, please log in.');
 
+        // API call
         const response = await axios.get(`http://localhost:8080/api/students/${studentId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -142,6 +165,7 @@ const CourseHistory = () => {
           'Year 04': { 'Semester 01': [], 'Semester 02': [] },
         };
 
+        // Categorize each enrolled course
         (fetchedStudent.coursesEnrolled || []).forEach((course) => {
           for (const year in coursesByYear) {
             for (const semester in coursesByYear[year]) {
@@ -153,6 +177,7 @@ const CourseHistory = () => {
           }
         });
 
+        // Update state with organized data
         setStudent({
           firstName: fetchedStudent.firstName,
           lastName: fetchedStudent.lastName,
@@ -175,6 +200,7 @@ const CourseHistory = () => {
 
   return (
     <div>
+      {/* Page Header */}
       <h2
         className="text-start px-5 mb-3 ms-2 mt-4 d-inline-block"
         style={{
@@ -189,6 +215,7 @@ const CourseHistory = () => {
         Course History
       </h2>
       <Container className="mt-4">
+        {/* Year Selection Pills */}
         <Nav variant="pills" className="justify-content-center mb-3">
           {['Year 01', 'Year 02', 'Year 03', 'Year 04'].map((year) => (
             <Nav.Item key={year}>
@@ -209,6 +236,7 @@ const CourseHistory = () => {
           ))}
         </Nav>
 
+        {/* Main Content Container */}
         <Container
           className="p-4 px-5"
           style={{
@@ -217,6 +245,7 @@ const CourseHistory = () => {
             boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
           }}
         >
+          {/* Semester Selection Pills */}
           <Nav variant="pills" className="justify-content-end mb-3">
             {['Semester 01', 'Semester 02'].map((semester) => (
               <Nav.Item key={semester}>
@@ -236,6 +265,7 @@ const CourseHistory = () => {
             ))}
           </Nav>
 
+          {/* Student Info Section */}
           <div className="mb-4">
             <div className="row">
               <div className="col-md-6">
@@ -249,6 +279,7 @@ const CourseHistory = () => {
             </div>
           </div>
 
+          {/* Courses List Section */}
           <h5
             className="text-center mb-5"
             style={{
